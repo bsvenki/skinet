@@ -16,7 +16,7 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {
+          "options": {            
             "outputPath": "dist/client",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -97,10 +97,7 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-             "node_modules/bootstrap/scss/bootstrap.min.css",	
-		         "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
-             "node_modules/font-awesome/css/font-awesome.min.css",
+            "styles": [           
              "src/styles.scss"
             ],
             "scripts": []
