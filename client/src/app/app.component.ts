@@ -1,6 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Product } from './models/product';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +8,13 @@ import { Product } from './models/product';
 export class AppComponent implements OnInit {
   title = 'Skinet';
    //products: any[] = []; //products array is of any type
-   products: Product[] = []; //products arrayis of type Product
+   //products: Product[] = []; //products arrayis of type Product
 
-  constructor(private http:HttpClient){}
+  constructor(){}
+  ngOnInit(): void {
+  }
 
+  /* move to shop service
   ngOnInit(): void {
     this.http.get('https://localhost:5001/api/products').subscribe({      
       next: (response: any) => this.products = response, //next: response => console.log(response), // what to do next
@@ -23,5 +24,6 @@ export class AppComponent implements OnInit {
         console.log('extra statement');
       }
     })
-  }
+  */
+  
 }
