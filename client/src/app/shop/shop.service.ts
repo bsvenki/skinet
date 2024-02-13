@@ -33,6 +33,10 @@ export class ShopService {
     // return this.http.get<Pagination<Product[]>>(this.baseUrl + 'products?pageSize-50');
   }
 
+  getProduct(id: number){
+    return this.http.get<Product>(this.baseUrl + 'products/' + id)
+  }
+  
   getBrands(){
     return this.http.get<Brand[]>(this.baseUrl + 'products/brands');
   }
