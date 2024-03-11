@@ -1,5 +1,7 @@
+using System.Numerics;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -50,11 +52,21 @@ namespace API.Controllers
         [HttpGet]
         // public async Task<ActionResult<List<Product>>> GetProducts()
         // public async Task<ActionResult<List<ProductToRetrunDto>>> GetProducts()
-        public async Task<ActionResult<IReadOnlyList<ProductToRetrunDto>>> GetProducts()
+        // public async Task<ActionResult<IReadOnlyList<ProductToRetrunDto>>> GetProducts(
+                //string sort,int? brandId, int? typeId)
+
+        // HTTP Get so cannot pass object, so used FromQuery
+        //  public async Task<ActionResult<IReadOnlyList<ProductToRetrunDto>>> GetProducts
+        public async Task<ActionResult<Pagination<ProductToRetrunDto>>> GetProducts(
+                [FromQuery]ProductSpecParams productParams)
         {
 
-           var spec = new ProductsWithTypesAndBrandsSpecification(); 
+           var spec = new ProductsWithTypesAndBrandsSpecification(productParams); 
            var products = await _productsRepo.ListAsync(spec);
+
+           var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
+
+           var totalItems = await _productsRepo.CounAsync(countSpec);
 
            //var products = await _productsRepo.ListAllAsync();
             // var products = await _repo.GetProductsAsync();
@@ -76,8 +88,18 @@ namespace API.Controllers
 
            }).ToList();
            */
+           
+           /*
            return Ok(_mapper
            .Map<IReadOnlyList<Product>,IReadOnlyList<ProductToRetrunDto>>(products));
+           */
+
+            var data = _mapper
+                            .Map<IReadOnlyList<Product>,IReadOnlyList<ProductToRetrunDto>>(products);
+
+            return Ok(new Pagination<ProductToRetrunDto>(productParams.PageIndex,productParams.PageSize,totalItems,data));
+
+
         }
 
         [HttpGet("{id}")]
