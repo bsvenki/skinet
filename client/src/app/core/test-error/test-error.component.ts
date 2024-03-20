@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { environment } from 'src/app/environments/environment';
 
 @Component({
-  selector: 'test-error',
+  selector: 'app-test-error',
   templateUrl: './test-error.component.html',
   styleUrls: ['./test-error.component.scss']
 })
@@ -11,40 +11,37 @@ export class TestErrorComponent {
   baseUrl = environment.apiUrl;
   validationErrors: string[] = [];
 
-  constructor(private http: HttpClient){}
+  constructor(private http: HttpClient) {}
 
- 
+  get404Error() {
+    this.http.get(this.baseUrl + 'products/42').subscribe({
+      next: response => console.log(response),
+      error: error => console.log(error)
+    })
+  }
 
-  get500Error(){
+  get500Error() {
     this.http.get(this.baseUrl + 'buggy/servererror').subscribe({
       next: response => console.log(response),
       error: error => console.log(error)
     })
   }
 
-  get400Error(){
+  get400Error() {
     this.http.get(this.baseUrl + 'buggy/badrequest').subscribe({
       next: response => console.log(response),
       error: error => console.log(error)
     })
   }
 
-  get400ValidationError(){
+  get400ValidationError() {
     this.http.get(this.baseUrl + 'products/fortytwo').subscribe({
       next: response => console.log(response),
       error: error => {
         console.log(error);
         this.validationErrors = error.errors;
-      }      
+      }
     })
   }
-
-  get404Error(){
-    this.http.get(this.baseUrl + 'products/42').subscribe({
-      next: response => console.log(response),
-      error: error => console.log(error)      
-    })
-  }
-  
 
 }

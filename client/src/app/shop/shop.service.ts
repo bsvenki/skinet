@@ -27,23 +27,33 @@ export class ShopService {
     params = params.append('pageSize',shopParams.pageSize);
     if(shopParams.search) params = params.append('search',shopParams.search);
     
-    return this.http.get<Product[]>(this.baseUrl + 'products',{params});
+    //return this.http.get<Product[]>(this.baseUrl + 'products',{params});
     
     //return this.http.get<Pagination<Product[]>>(this.baseUrl + 'products');
-    // return this.http.get<Pagination<Product[]>>(this.baseUrl + 'products?pageSize-50');
+    //return this.http.get<Pagination<Product[]>>(this.baseUrl + 'products?pageSize-50');
+    return this.http.get<Pagination<Product[]>>(this.baseUrl + 'products', {params});
   }
 
   getProduct(id: number){
     return this.http.get<Product>(this.baseUrl + 'products/' + id)
   }
   
+
   getBrands(){
+    
     return this.http.get<Brand[]>(this.baseUrl + 'products/brands');
   }
 
   getTypes(){
     return this.http.get<Type[]>(this.baseUrl + 'products/types');
   }
+ 
+
+
+
+
+
+  
 
   
 }

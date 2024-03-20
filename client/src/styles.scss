@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import 'node_modules/bootstrap/scss/bootstrap.scss';	
+@import 'node_modules/bootstrap/dist/css/bootstrap.min.css';	
 @import 'node_modules/ngx-bootstrap/datepicker/bs-datepicker.css';
 @import 'node_modules/bootswatch/dist/united/bootstrap.min.css';
-@import 'node_modules/font-awesome/css/font-awesome.css';
+@import "node_modules/font-awesome/css/font-awesome.min.css";
 @import 'node_modules/ngx-spinner/animations/timer.css';
 @import 'node_modules/ngx-toastr/toastr.css';
 
@@ -11,3 +11,20 @@ label.xng-breadcrumb-trial{
     color: orange
 }
 
+/* To change bootswatch united default theme default coloar
+
+.bg-primary {
+    background-color: #5c2d91 !important;
+  }
+  .btn-primary {
+    color: #fff !important;
+    background-color: #ff615a !important;
+    border-color: #ff615a !important;
+  }
+  .btn-primary:hover {
+    color: #fff !important;
+    background-color: #f8544c !important;
+    border-color: #c34113 !important;
+  }
+
+  */

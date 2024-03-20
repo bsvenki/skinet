@@ -70,8 +70,8 @@
 
             <div class="d-flex justify-content-center" *ngIf="totalCount > 0">
                <app-pager
-                [totalCount]="totalCount";
-                [pageSize]="shopParams.pageSize"
+                [totalCount]="totalCount"
+                [pageSize]="shopParams.pageSize"                                
                 (pageChanged)="onPageChanged($event)"
                ></app-pager> 
             </div>

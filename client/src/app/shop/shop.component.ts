@@ -16,9 +16,12 @@ export class ShopComponent implements OnInit {
   brands: Brand[] = [];
   types: Type[] = [];
   shopParams = new ShopParams();
+
+
   //brandIdSelected = 0;
   //typeIdSelected = 0;
   //sortSelected = 'name';
+
   sortOptions = [
     {name: 'Alphabetical', value:'name'},
     {name: 'Price: Low to high', value:'priceAsc'},
@@ -41,10 +44,10 @@ $event: any;
     //this.shopService.getProducts(this.brandIdSelected,this.typeIdSelected,this.sortSelected).subscribe({
     // next: response => this.products = response,
       next: response => {
-        this.products = response;
-        //this.shopParams.pageNumber = response.pageIndex;
-        //this.shopParams.pageSize = response.pageSize;
-        //this.totalCount = response.count;
+        this.products = response.data;
+        this.totalCount = response.count;
+        this.shopParams.pageNumber = response.pageIndex;
+        this.shopParams.pageSize = response.pageSize;      
 
       },
       error: error => console.log(error)
@@ -55,37 +58,44 @@ $event: any;
   getBrands(){
     this.shopService.getBrands().subscribe({
       //next: response => this.brands = response,
-      next: response => this.brands = [{id:0, name:'All'},...response],
+      next: response => this.brands = [{id:0, name:'All'}, ...response],
       error: error => console.log(error)
     })
   }
 
   // No pagination so response.data not required
+  /*
   getTypes(){
     this.shopService.getTypes().subscribe({
       //next: response => this.types = response,
-      next: response => this.types = [{id:0, name:'All'},...response],
+      next: response => this.types = [{id:0, name:'All'}, ...response],
+      error: error => console.log(error)
+    })
+  }
+  */
+
+  getTypes() {
+    this.shopService.getTypes().subscribe({
+      next: response => this.types = [{id: 0, name: 'All'}, ...response],
       error: error => console.log(error)
     })
   }
 
   onBrandSelected(brandId: number){
-    //this.brandIdSelected = brandId;
+   
     this.shopParams.brandId = brandId;
     this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
-  onTypeSelected(typeId: number){
-    //this.typeIdSelected = typeId;
-    this.shopParams.typeId = typeId;
-    this.shopParams.pageNumber = 1;
+  onTypeSelected(typeId: number){   
+    this.shopParams.typeId = typeId;   
+    this.shopParams.pageNumber = 1; 
     this.getProducts();
   }
 
   onSortSelected(event: any){
-    this.shopParams.sort = event.target.value;
-    //this.sortSelected = event.target.value;
+    this.shopParams.sort = event.target.value;    
     this.getProducts();
   }
 
