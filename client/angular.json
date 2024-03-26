@@ -16,7 +16,10 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {            
+          "options": {    
+            "allowedCommonJsDependencies": [
+              "cuid"
+            ],        
             "outputPath": "dist/client",
             "index": "src/index.html",
             "main": "src/main.ts",

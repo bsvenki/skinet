@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: CorsPolicy,
                       policy  =>
                       {
-                          policy.WithOrigins("https://localhost:4200");
+                          policy.WithOrigins("https://localhost:4200");                          
                       });
 });
 
@@ -69,7 +69,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(CorsPolicy);
+
 app.UseStaticFiles();
 
 app.UseCors("CorsPolicy");
