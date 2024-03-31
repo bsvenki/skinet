@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-
+builder.Services.AddSwaggerDocumentation();
 
 
 /*
@@ -66,13 +66,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseStatusCodePagesWithRedirects("/erros/{0}");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
+app.UseSwaggerDocumentation();
 
 app.UseStaticFiles();
 
