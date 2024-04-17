@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BasketService } from './basket/basket.service';
+import { AccountService } from './account/account.service';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,24 @@ export class AppComponent implements OnInit {
    //products: any[] = []; //products array is of any type
    //products: Product[] = []; //products arrayis of type Product
 
-  constructor(private basketService: BasketService){}
+  constructor(private basketService: BasketService,private accountService: AccountService){}
   
   ngOnInit(): void {
+    //const basketId = localStorage.getItem('baket_id');
+    //if(basketId) this.basketService.getBasket(basketId);
+    this.loadBasket();
+    this.loadCurrentUser();
+  }
+
+  loadBasket(){
     const basketId = localStorage.getItem('baket_id');
     if(basketId) this.basketService.getBasket(basketId);
+  }
+
+  loadCurrentUser(){
+    const token = localStorage.getItem('token');
+    //if (token) this.accountService.loadCurrentUser(token).subscribe();
+    this.accountService.loadCurrentUser(token).subscribe();
   }
 
   /* move to shop service
