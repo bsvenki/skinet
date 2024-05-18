@@ -26,11 +26,19 @@ export class CheckoutPaymentComponent {
     if(!orderToCreate) return;
     this.checkoutService.createOrder(orderToCreate).subscribe({
       next: order => {
-        this.toastr.success('Order created successfully');
-        this.basketService.deleteLocalBasket();
         //console.log(order);
-        const navigationExtras: NavigationExtras = {state: order};
-        this.router.navigate(['checkout/success'], navigationExtras);
+        // implement validation to check for order creation
+        if(order.id != null)
+        {
+          this.toastr.success('Order created successfully');
+          this.basketService.deleteLocalBasket();        
+          const navigationExtras: NavigationExtras = {state: order};
+          this.router.navigate(['checkout/success'], navigationExtras);
+        }
+        else
+        {
+          this.toastr.error('Order creation failed');
+        }
       }
     })
   }  
