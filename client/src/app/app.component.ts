@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BasketService } from './basket/basket.service';
 import { AccountService } from './account/account.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent implements OnInit {
    //products: any[] = []; //products array is of any type
    //products: Product[] = []; //products arrayis of type Product
 
-  constructor(private basketService: BasketService,private accountService: AccountService){}
+  constructor(private basketService: BasketService,private accountService: AccountService,public breadcrumbService: BreadcrumbService){}
   
   ngOnInit(): void {
     //const basketId = localStorage.getItem('baket_id');

@@ -29,6 +29,11 @@ namespace Infrastructure.Data
             return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data);
         }
 
+        public Task GetByIdAsync(string basketId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
         {
             var created = await _database.StringSetAsync(basket.Id, 

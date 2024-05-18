@@ -17,5 +17,10 @@ namespace Core.Interfaces
 
         Task<int> CounAsync(ISpecification<T> spec);
 
+        void Add(T entity);
+
+        void Update(T entity);
+
+        void Delete(T entitjy);
     }
 }

@@ -32,7 +32,7 @@ $event: any;
   
   constructor(private shopService: ShopService){}
   
-  ngOnInit(): void {
+  ngOnInit() {
     this.getProducts();
     this.getBrands();
     this.getTypes();
