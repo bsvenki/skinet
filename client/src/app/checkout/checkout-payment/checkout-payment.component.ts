@@ -8,9 +8,10 @@ import { Address } from 'src/app/shared/models/user';
 import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-checkout-payment',
-  templateUrl: './checkout-payment.component.html',
-  styleUrls: ['./checkout-payment.component.scss']
+    selector: 'app-checkout-payment',
+    templateUrl: './checkout-payment.component.html',
+    styleUrls: ['./checkout-payment.component.scss'],
+    standalone: false
 })
 export class CheckoutPaymentComponent {
   @Input() checkoutForm?: FormGroup;

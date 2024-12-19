@@ -3,9 +3,10 @@ import { BasketService } from './basket.service';
 import { BasketItem } from '../shared/models/basket';
 
 @Component({
-  selector: 'app-basket',
-  templateUrl: './basket.component.html',
-  styleUrls: ['./basket.component.scss']
+    selector: 'app-basket',
+    templateUrl: './basket.component.html',
+    styleUrls: ['./basket.component.scss'],
+    standalone: false
 })
 export class BasketComponent {
 

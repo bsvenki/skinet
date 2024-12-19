@@ -7,9 +7,10 @@ import { BasketService } from 'src/app/basket/basket.service';
 import { take } from 'rxjs';
 
 @Component({
-  selector: 'app-product-details',
-  templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.scss']
+    selector: 'app-product-details',
+    templateUrl: './product-details.component.html',
+    styleUrls: ['./product-details.component.scss'],
+    standalone: false
 })
 export class ProductDetailsComponent implements OnInit {
   
