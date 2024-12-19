@@ -39,12 +39,7 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environments.ts",
-                  "with": "src/environments/environments.prod.ts"
-                }                
-              ],
+              
               "budgets": [
                 {
                   "type": "initial",
@@ -60,6 +55,7 @@
               "outputHashing": "all"
             },
             "development": {
+              
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -73,16 +69,17 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+            "buildTarget": "client:build",
             "sslCert": "ssl/localhost.pem",
             "sslKey": "ssl/localhost-key.pem",
             "ssl": true
           },
           "configurations": {
             "production": {
-              "browserTarget": "client:build:production"
+              
             },
             "development": {
-              "browserTarget": "client:build:development"
+             
             }
           },
           "defaultConfiguration": "development"
