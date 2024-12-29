@@ -11,22 +11,33 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 import { JwtInterceptor } from './core/interceptor/jwt.interceptor';
 import { OrderDetailedComponent } from './order-detailed/order-detailed.component';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';  // Import FormsModule
 
 
 
 
+
+  
 @NgModule({ declarations: [
         AppComponent,
         OrderDetailedComponent
+        
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         CoreModule,
-        HomeModule], providers: [
+        HomeModule,
+        FormsModule,
+        ReactiveFormsModule
+        ], 
+    providers: [
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi())
     ] })
 export class AppModule { }
+
+

@@ -1,6 +1,7 @@
 using API.Dtos;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Appointment;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
 
@@ -39,7 +40,11 @@ namespace API.Helpers
                 .ForMember(d=> d.PictureUrl, o => o.MapFrom(s => s.ItemOrdered.PictureUrl))
                 .ForMember(d=> d.PictureUrl, o => o.MapFrom<OrderItemUrlResolver>());
 
-
+            CreateMap<AppointmentDto, AppointmentSlot>()
+                .ForMember(d=> d.DoctorId, o => o.MapFrom(s => s.doctorId))
+                .ForMember(d=> d.Startdate, o => o.MapFrom(s => s.start))
+                .ForMember(d=> d.Enddate, o => o.MapFrom(s => s.end));
+                
         }
     }
 }

@@ -20,9 +20,17 @@
     "@angular/platform-browser": "^19.0.5",
     "@angular/platform-browser-dynamic": "^19.0.5",
     "@angular/router": "^19.0.5",
+    "@fullcalendar/angular": "^6.1.16",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/list": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
+    "angular-calendar": "^0.31.1",
     "bootstrap": "^5.2.3",
     "bootswatch": "^5.3.2",
     "cuid": "^3.0.0",
+    "flatpickr": "^4.6.13",
     "font-awesome": "^4.7.0",
     "ngx-bootstrap": "^10.3.0",
     "ngx-spinner": "^15.0.1",
@@ -31,6 +39,11 @@
     "tslib": "^2.3.0",
     "xng-breadcrumb": "^9.0.0",
     "zone.js": "~0.15.0"
+  },
+  "dependenciesMeta": {
+    "@fullcalendar/angular": {
+      "injected": true
+    }
   },
   "devDependencies": {
     "@angular/cli": "^19.0.6",

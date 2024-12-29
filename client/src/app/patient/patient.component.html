@@ -1,0 +1,116 @@
+
+<div class='demo-app' style="margin-top: 80px">
+
+    <div class='demo-app-sidebar'>
+      
+      <div class='demo-app-sidebar-section'>
+        
+        <!--
+        <form>
+           
+            <label for="eventStartDate">Start Date & Time</label>
+            <input type="datetime-local" id="eventStartDate" [ngModel]="eventStartDate" name="eventStartDate"   value="" 
+                required />
+        </form>
+        -->
+       
+        
+        <h2>Instructions</h2>
+        <ul>
+          <li>Working hours 9 to 5</li>
+          <li>Sat and Sun Holiday</li>
+          <li>Cannot modify past oppointments</li>
+        </ul>
+        
+      </div>
+      <!--
+      <div class='demo-app-sidebar-section'>
+        <label>
+          <input
+            type='checkbox'
+            [checked]='calendarVisible()'
+            (change)='handleCalendarToggle()'
+          />
+          toggle whole calendar
+        </label>
+      </div>
+      <div class='demo-app-sidebar-section'>
+        <label>
+          <input
+            type='checkbox'
+            [checked]='calendarOptions().weekends'
+            (change)='handleWeekendsToggle()'
+          />
+          toggle weekends
+        </label>
+      </div>
+      
+      <div class='demo-app-sidebar-section'>
+        <h2>All Events ({{currentEvents().length}})</h2>
+        <ul>
+          <li *ngFor='let event of currentEvents()'>
+            <b>{{event.startStr}}</b>
+            <i>{{event.title}}</i>
+          </li>
+        </ul>
+        <ul>
+          From API 
+          <div *ngFor="let item of appointments; let i=index">
+            <div>{{item.id}}</div>
+            <div>{{item.title}}</div>
+            <div>{{item.start}}</div>
+            <div>{{item.end}}</div>
+            
+          </div>
+        </ul>
+      </div>
+       -->
+    </div>
+   
+  
+    <div class='demo-app-main'>
+      <!-- ng-bootstrap Datepicker -->
+       <!--
+      <button (click)="addNewEvent()">Add New Event</button>
+      <button (click)="updateExistingEvent()">Update Event</button>
+      <button (click)="deleteEvent2(2)">Delete Event</button>
+      -->
+     
+      <full-calendar #calendar *ngIf='calendarVisible()' [events]="appointments"   [options]='calendarOptions()'>
+        <ng-template #eventContent let-arg>
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </ng-template>
+      </full-calendar>
+
+      
+       
+    </div>
+  
+  </div>
+
+
+
+
+<!-- Modal for adding/editing events -->
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <span class="close-btn" (click)="closeModal()">×</span>
+    <h2>{{ selectedEvent ? 'Edit Event' : 'Add Event' }}</h2>
+    <form (ngSubmit)="saveEvent()">
+      <label for="eventTitle">Title</label>
+      <input type="text" id="eventTitle" [(ngModel)]="eventTitle" name="eventTitle" required />
+      
+      <label for="eventStartDate">Start Date & Time</label>
+      <input type="date-local" id="eventStartDate" [ngModel]="eventStartDate" name="eventStartDate"   value="" 
+       required />
+    
+
+      <label for="eventEndDate">End Date & Time</label>
+      <input type="date-local" id="eventEndDate" [ngModel]="eventEndDate" value="" 
+      name="eventEndDate"  readonly  />
+
+      <button type="submit">{{ selectedEvent ? 'Update' : 'Save' }}</button>
+    </form>
+  </div>
+</div>

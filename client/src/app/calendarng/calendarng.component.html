@@ -1,0 +1,26 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+      <button (click)="switchToPrevMonth()">Previous</button>     
+      <span>{{ currentDate | date: 'MMMM yyyy' }}</span>
+      <button (click)="switchToNextMonth()">Next</button>
+    </div>
+  
+    <div class="calendar-grid" >
+      <div *ngFor="let day of getCalendarDays()" class="calendar-cell" (click)="addEvent(day)">
+        <span>{{ day }}</span>
+        <div *ngFor="let event of getEventsForDay(day)">
+          <div>
+            <span>{{ event.eventName }}</span>
+            <button (click)="editEvent(day, event.eventName)">Edit</button>
+            <button (click)="deleteEvent(day, event.eventName)">Delete</button>
+          </div>
+        </div>
+        <!--
+        <button *ngIf="!getEventsForDay(day).length" (click)="addEvent(day)">Add Event</button>
+        -->
+      </div>
+    </div>
+  </div>
+
+  
+  

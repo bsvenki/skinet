@@ -7,6 +7,7 @@
 @import 'node_modules/ngx-spinner/animations/timer.css';
 @import 'node_modules/ngx-toastr/toastr.css';
 
+
 label.xng-breadcrumb-trail {
   color: orange;
 }
@@ -28,3 +29,11 @@ label.xng-breadcrumb-trail {
   }
 
   */
+
+  html,
+  body,
+  body > * { /* the app-root */
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }

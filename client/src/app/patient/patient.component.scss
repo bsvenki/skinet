@@ -1,0 +1,182 @@
+
+h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  ul {
+    margin: 0;
+    padding: 0 0 0 1.5em;
+  }
+  
+  li {
+    margin: 1.5em 0;
+    padding: 0;
+  }
+  
+  b { /* used for event dates/times */
+    margin-right: 3px;
+  }
+  
+  .demo-app {
+    display: flex;
+    min-height: 100%;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+  
+  .demo-app-sidebar {
+    width: 300px;
+    line-height: 1.5;
+    background: #eaf9ff;
+    border-right: 1px solid #d3e2e8;
+  }
+  
+  .demo-app-sidebar-section {
+    padding: 2em;
+  }
+  
+  .demo-app-main {
+    flex-grow: 1;
+    padding: 3em;
+    height: 100%;
+  }
+  
+  .fc { /* the calendar root */
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+
+  .fc-day.available {
+    background-color: #b7f5b7 !important;  /* Light green */
+    color: #1e7e34;  /* Dark green text */
+    border: 1px solid #388e3c;
+  }
+  
+  /* Optionally, add styles for unavailable or out-of-office hours */
+  .fc-day.unavailable {
+    background-color: #f2f2f2;  /* Gray for unavailable time slots */
+    color: #757575;  /* Lighter gray text */
+  }
+
+  .available {
+    background-color: rgb(227, 58, 7);
+  }
+
+  .fc-day-thursday, .fc-day-friday {
+    background-color: lightgreen !important;
+}
+
+  .fc-day.available {
+    background-color: #a8e6a1;  /* Green for available */
+ }
+  
+ .custom-event {
+  background-color: lightgreen !important;
+}
+ // .fc-day.unavailable {
+ //   background-color: #ffcccb;  /* Red for unavailable */
+ // }
+  
+
+ /* Highlight weekends (Saturdays and Sundays) */
+.fc-day-sat, .fc-day-sun {
+  background-color: lightgray !important;
+}
+
+/* Highlight today's date */
+.fc-day-today {
+  background-color: lightblue !important;
+}
+
+/* Highlight holidays */
+.fc-day[data-date="2024-12-27"] {
+  background-color: rgb(149, 0, 255) !important;
+}
+
+.fc-business-hours {
+  background-color: #f0f8ff;  /* Light blue background for business hours */
+}
+
+
+/* Style for the delete icon inside the event */
+.delete-icon {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+
+/* Modal background */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Modal content box */
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 100%;
+  }
+  
+  /* Close button in the modal */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Style for input fields in the modal */
+  input[type="text"], input[type="datetime-local"] {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Button style */
+  button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Delete icon in the event */
+  .delete-icon {
+    background: none;
+    border: none;
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+  
+
