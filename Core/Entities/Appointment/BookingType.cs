@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.AppointmentAgreegate
 {
-    public class Doctor : BaseEntity
+    public class BookingType : BaseEntity
     {
         public string Name { get; set; }
+        
     }
 }

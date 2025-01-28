@@ -6,13 +6,11 @@ import { ServerErrorComponent } from './core/server-error/server-error.component
 import { NotFoundComponent } from './core/not-found/not-found.component';
 import { ProductDetailsComponent } from './shop/product-details/product-details.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { ManagerComponent } from './appointment/manager/manager.component';
 import { CalendarComponent } from './calendarng/calendarng.component';
-import { PatientComponent } from './patient/patient.component';
+import { PatientComponent } from './appointment/patient/patient.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent, data: {breadcrumb: 'Home'}}, 
-  {path: 'manager', component: ManagerComponent},
   {path: 'cnng', component: CalendarComponent},  
   {path: 'patient', component: PatientComponent},
   {path: 'test-error', component: TestErrorComponent},

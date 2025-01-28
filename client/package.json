@@ -32,6 +32,7 @@
     "cuid": "^3.0.0",
     "flatpickr": "^4.6.13",
     "font-awesome": "^4.7.0",
+    "ng-bootstrap": "^1.6.3",
     "ngx-bootstrap": "^10.3.0",
     "ngx-spinner": "^15.0.1",
     "ngx-toastr": "^15.2.0",

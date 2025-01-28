@@ -6,9 +6,10 @@ import { ToastrService } from 'ngx-toastr';
 import { Basket } from 'src/app/shared/models/basket';
 import { Address } from 'src/app/shared/models/user';
 import { NavigationExtras, Router } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
 
 @Component({
-    selector: 'app-checkout-payment',
+    selector: 'app-checkout-payment',   
     templateUrl: './checkout-payment.component.html',
     styleUrls: ['./checkout-payment.component.scss'],
     standalone: false
@@ -56,3 +57,6 @@ export class CheckoutPaymentComponent {
   }
 
 }
+
+
+

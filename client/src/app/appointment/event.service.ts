@@ -1,9 +1,19 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap} from 'rxjs/operators';
-import {HttpClient,HttpResponse} from '@angular/common/http';
+import {HttpClient,HttpParams,HttpResponse} from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { IAppointment } from '../shared/models/appointment';
+import { Patient } from '../shared/models/patient';
+import { BookingType } from '../shared/models/bookingType';
+import { TherapyCategory } from '../shared/models/therapycategory';
+import { Therapy } from '../shared/models/therapy';
+import { Therapist } from '../shared/models/therapist';
+import { TherapistTherapy } from '../shared/models/therapistTherapy';
+import { AppointmentParams } from '../shared/models/appointmentParams';
+import { Doctor } from '../shared/models/doctor';
+
+
 
 
 @Injectable({
@@ -38,7 +48,7 @@ export class EventService {
   // Mock event data for demonstration
   getEvents(): Observable<any[]> {
 
-    return this.http.get<Event[]>(this.baseUrl + 'Appointment'); 
+    return this.http.get<Event[]>(this.baseUrl + 'appointment'); 
     
     /*
     
@@ -116,11 +126,22 @@ export class EventService {
   }
 
   // Fetch events from the API and update the BehaviorSubject
-  fetchEvents(): void {
-    
-    this.http.get<any[]>(this.baseUrl + 'Appointment').pipe(
-      tap((events) => {
+  fetchEvents(appointParams: AppointmentParams): void {
 
+     let params = new HttpParams();
+    
+   
+    params = params.append('PatientId',appointParams.patientId);
+    params = params.append('BookingTypeId',appointParams.bookingTypeId);
+    params = params.append('TherapyCategoryId',appointParams.therapyCategoryId);
+    params = params.append('TherapistTherapyId',appointParams.therapistTherapyId); 
+    params = params.append('DoctorId',appointParams.doctorId);
+    params = params.append('Status',appointParams.status);
+
+    
+    this.http.get<any[]>(this.baseUrl + 'appointment',{params}).pipe(
+      tap((events) => {
+ 
         
         events.forEach(event => {
           // Assuming the event date is in UTC or another time zone
@@ -128,8 +149,22 @@ export class EventService {
           //event.end = this.convertToIST(event.end);
 
           // extended property fullcalendar
+          if(event.patientId == 2)
+          {
+            event.color = '#c30010';
+            event.status = 'Confirmed';   
+          }
+          else
+          {
+            event.color = '0077B6'; 
+            event.status = 'free';   
+          }
           event.editable = false;
-          event.status = 'free';
+                       
+          extendedProps: {
+            customColor: 'green'
+          }; 
+         
           
         });
         
@@ -150,6 +185,46 @@ export class EventService {
     // Convert the date to IST (UTC +5:30)
     return new Date(date).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
   }
+
+  getPatients(){      
+      return this.http.get<Patient[]>(this.baseUrl + 'appointment/patients');
+  }
+
+  getBookingTypes(){      
+    return this.http.get<BookingType[]>(this.baseUrl + 'appointment/bookingtypes');
+  }
+
+  getTherapyCategories(){      
+    return this.http.get<TherapyCategory[]>(this.baseUrl + 'appointment/therapycategories');
+  }
+
+  getTherapysByCategoryId(id: number){      
+    return this.http.get<Therapy[]>(this.baseUrl + 'appointment/therapysbycategory/' + id);
+  }
+
+  getTherapists(){      
+    return this.http.get<Therapist[]>(this.baseUrl + 'appointment/therapists');
+  }
+
+  getDoctors(){      
+    return this.http.get<Doctor[]>(this.baseUrl + 'appointment/doctors');
+  }
+
+  /*
+
+  getTherapistsByTherapyId(therapyid: number){
+    return this.http.get<TherapistTherapy[]>(this.baseUrl + 'appointment/therapistsbytherapy?TherapyId=' + therapyid);
+  }
+  */
+
+  getTherapistsByTherapyId(therapyid: number): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl + 'appointment/therapistsbytherapy?therapyId=' + therapyid);
+  }
+
+  getAppointments(){        
+    return this.http.get<IAppointment[]>(this.baseUrl + 'Appointment');        
+  }
+
 
    
 }

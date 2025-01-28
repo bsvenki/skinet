@@ -2,22 +2,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 
-namespace Core.Entities.Appointment
+namespace Core.Entities.AppointmentAgreegate
 {
-    public class AppointmentSlot : BaseEntity
+    public class Appointment : BaseEntity
     {
-        
-        
+        public int PatientId { get; set; }
+        public int BookingTypeId  { get; set; }
+        public int TherapyCategoryId { get; set; } 
+        public int TherapistTherapyId { get; set; }
+        public int DoctorId { get; set; }
         public DateTime Startdate { get; set; } 
         
         //[JsonPropertyName("end")]
-        public DateTime Enddate { get; set; }
-
-       
-        public Doctor Doctor { get; set; }
-
-        public int DoctorId { get; set; }      
-        
+        public DateTime Enddate { get; set; }     
+      
 
         public string Status { get; set; } = "free";
 

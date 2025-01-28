@@ -7,6 +7,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Infrastructue.Data;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -40,7 +41,21 @@ namespace Infrastructure.Data
         public async Task<IReadOnlyList<T>> ListAllAsync()
         {
            return await _context.Set<T>().ToListAsync();
-        }       
+        } 
+
+
+        public async Task<IReadOnlyList<T>> ListAllAsync(Func<IQueryable<T>, IQueryable<T>> include = null)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            // Apply the Include expression if provided
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.ToListAsync();
+        }      
 
         public async Task<int> CounAsync(ISpecification<T> spec)
         {

@@ -12,8 +12,12 @@ namespace Core.Interfaces
         Task<T> GetByIdAsync(int id);
         Task<IReadOnlyList<T>> ListAllAsync();
 
+        Task<IReadOnlyList<T>> ListAllAsync(Func<IQueryable<T>, IQueryable<T>> include = null);
+
         Task<T> GetEntityWithSpec(ISpecification<T> spec);
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
+
+        
 
         Task<int> CounAsync(ISpecification<T> spec);
 

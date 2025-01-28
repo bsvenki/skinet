@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.AppointmentAgreegate
 {
-    public class Doctor : BaseEntity
+    public class Patient: BaseEntity
     {
         public string Name { get; set; }
+
+        public string Email { get; set; }
     }
 }

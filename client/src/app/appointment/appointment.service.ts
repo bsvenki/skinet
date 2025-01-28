@@ -17,18 +17,22 @@ import { I } from '@fullcalendar/core/internal-common';
 export class AppointmentService {
 
     baseUrl = environment.apiUrl;
-    appointments: IAppointment[] = [];
+    //appointments: IAppointment[] = [];
     initialEvents: EventInput[] = [];
     
   constructor(private http: HttpClient) { }
 
+  /*
   getAppointments(){        
         return this.http.get<IAppointment[]>(this.baseUrl + 'Appointment');        
   }
+  */
 
   createBrand(appointment : IAppointment) {
     return this.http.post(this.baseUrl + 'Appointment', appointment);
   }
+
+  
 
 
 

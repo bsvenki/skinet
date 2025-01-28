@@ -19,7 +19,7 @@ export class LoginComponent {
 
   constructor(private accountService: AccountService,private router: Router,
               private activatedRoute: ActivatedRoute  ){
-                this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/shop'
+                this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || '/patient'
 
   }
 

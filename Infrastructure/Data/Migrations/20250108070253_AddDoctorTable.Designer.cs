@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20241224123750_AppointmentTitleUpdate")]
-    partial class AppointmentTitleUpdate
+    [Migration("20250108070253_AddDoctorTable")]
+    partial class AddDoctorTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,17 +20,20 @@ namespace Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
-            modelBuilder.Entity("Core.Entities.Appointment.AppointmentSlot", b =>
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Appointment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DoctorId")
+                    b.Property<int>("BookingTypeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Enddate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Startdate")
                         .HasColumnType("TEXT");
@@ -38,17 +41,65 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TherapistId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TherapistTherapyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TherapyCategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
                     b.ToTable("Appointments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BookingTypeId = 1,
+                            Enddate = new DateTime(2025, 1, 9, 13, 2, 52, 303, DateTimeKind.Local).AddTicks(3793),
+                            PatientId = 1,
+                            Startdate = new DateTime(2025, 1, 9, 12, 32, 52, 303, DateTimeKind.Local).AddTicks(3773),
+                            Status = "Confirmed",
+                            TherapistId = 1,
+                            TherapistTherapyId = 0,
+                            TherapyCategoryId = 0,
+                            Title = "Demo Title1"
+                        });
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment.Doctor", b =>
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.BookingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookingTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Consulting"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Therapy"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Doctor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,17 +116,198 @@ namespace Infrastructure.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Therapist 1"
+                            Name = "Doctor1"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Therapist 2"
+                            Name = "Doctor2"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Therapist 3"
+                            Name = "Doctor3"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Patient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Patients");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Patient1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Patient2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Patient3"
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Therapist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Therapists");
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.TherapistTherapy", b =>
+                {
+                    b.Property<int>("TherapistId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TherapyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TherapistId", "TherapyId");
+
+                    b.HasIndex("TherapyId");
+
+                    b.ToTable("TherapistTherapies");
+
+                    b.HasData(
+                        new
+                        {
+                            TherapistId = 1,
+                            TherapyId = 1,
+                            Id = 1
+                        },
+                        new
+                        {
+                            TherapistId = 1,
+                            TherapyId = 2,
+                            Id = 2
+                        },
+                        new
+                        {
+                            TherapistId = 2,
+                            TherapyId = 3,
+                            Id = 3
+                        },
+                        new
+                        {
+                            TherapistId = 3,
+                            TherapyId = 4,
+                            Id = 4
+                        },
+                        new
+                        {
+                            TherapistId = 3,
+                            TherapyId = 5,
+                            Id = 5
+                        },
+                        new
+                        {
+                            TherapistId = 2,
+                            TherapyId = 1,
+                            Id = 6
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Therapy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TherapyCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TherapyCategoryId");
+
+                    b.ToTable("Therapies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Panchakarma",
+                            TherapyCategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Shirodhara",
+                            TherapyCategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Abhyanga",
+                            TherapyCategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Insomnia",
+                            TherapyCategoryId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Relaxation techniques",
+                            TherapyCategoryId = 2
+                        });
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.TherapyCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TherapyCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ayurveda"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Sleep"
                         });
                 });
 
@@ -222,15 +454,34 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ProductTypes");
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment.AppointmentSlot", b =>
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.TherapistTherapy", b =>
                 {
-                    b.HasOne("Core.Entities.Appointment.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
+                    b.HasOne("Core.Entities.AppointmentAgreegate.Therapist", "Therapist")
+                        .WithMany("TherapistTherapies")
+                        .HasForeignKey("TherapistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Doctor");
+                    b.HasOne("Core.Entities.AppointmentAgreegate.Therapy", "Therapy")
+                        .WithMany("TherapistTherapies")
+                        .HasForeignKey("TherapyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Therapist");
+
+                    b.Navigation("Therapy");
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Therapy", b =>
+                {
+                    b.HasOne("Core.Entities.AppointmentAgreegate.TherapyCategory", "TherapyCategory")
+                        .WithMany("Therapys")
+                        .HasForeignKey("TherapyCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TherapyCategory");
                 });
 
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>
@@ -325,6 +576,21 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("ProductBrand");
 
                     b.Navigation("ProductType");
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Therapist", b =>
+                {
+                    b.Navigation("TherapistTherapies");
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.Therapy", b =>
+                {
+                    b.Navigation("TherapistTherapies");
+                });
+
+            modelBuilder.Entity("Core.Entities.AppointmentAgreegate.TherapyCategory", b =>
+                {
+                    b.Navigation("Therapys");
                 });
 
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>

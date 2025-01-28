@@ -1,6 +1,6 @@
 <div class="mt-4" *ngIf="checkoutForm" [formGroup]="checkoutForm">
     <div class="d-flex justify-content-between align-items-center">
-        <h4>Shipping address</h4>
+        <h4>Patient address</h4>
         <button class="btn btn-outline-success mb-3" 
             (click)="saveUserAddress()"
             [disabled]="!checkoutForm.get('addressForm')?.valid || 
@@ -35,7 +35,7 @@
         <i class="fa fa-angle-left"></i>Back to basket
     </button>
     <button class="btn btn-primary" cdkStepperNext>
-       Go to Delivery <i class="fa fa-angle-right"></i>
+       Go to Payment <i class="fa fa-angle-right"></i>
     </button>
 </div>
 

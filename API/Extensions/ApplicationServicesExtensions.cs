@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
+
 namespace API.Extensions
 {
     public static class ApplicationServicesExtensions
@@ -14,8 +15,6 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
                                                                 IConfiguration config)
         {
-
-         
             services.AddDbContext<StoreContext>(opt => 
             {
                 opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
@@ -33,6 +32,7 @@ namespace API.Extensions
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IBasketRepository,  BasketRepository>();
+            services.AddScoped<IAppointmentRepository,  AppointmentRepository>();
             
             
 

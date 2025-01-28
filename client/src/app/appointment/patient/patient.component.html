@@ -1,0 +1,215 @@
+
+<div class='demo-app' style="margin-top: 80px">
+
+    <div class='demo-app-sidebar'>
+      
+      <div class='demo-app-sidebar-section'>
+        
+        
+       
+           
+            <label for="eventStartDate">Date:</label>
+            <!--
+            <input type="datetime-local" id="eventStartDate" [ngModel]="eventStartDate" name="eventStartDate"   value="" 
+                required />
+            -->
+
+            
+             <input type="date" id="pickedDate" [(ngModel)]="pickedDate" (change)="onDateChange($event)" />
+             
+        
+        
+       
+        <h5 class="text-warning ms-3">Patient</h5>
+        <select class="form-select mb-4" (change)="onPatientSelected($event)">
+          <option *ngFor="let patient of patients" 
+            [selected]="patient.id === appointmentParams.patientId"
+            [value]="patient.id">
+              {{patient.name}}
+          </option>
+        </select>
+
+        <h5 class="text-warning ms-3">Booking Type</h5>
+        <div  class="list-group-item" *ngFor='let bookingtype of bookingtypes;let i = index' >                    
+         
+          <input 
+            type="radio" 
+            [value]="bookingtype.id"            
+            name="bookingType" 
+            [checked]="bookingtype.id == appointmentParams.bookingTypeId"
+            [id]="bookingtype.id"
+            (change)="onBookingTypeChange($event)"
+            />
+          <label [for]="bookingtype.id" >&nbsp;{{ bookingtype.name }}</label>
+          
+        </div> 
+        <br>
+
+        <div *ngIf="appointmentParams.bookingTypeId==2">
+          <h5 class="text-warning ms-3">Therapy Category</h5>
+          <select class="form-select mb-4" (change)="onTherapyCategorySelected($event)">
+            <option *ngFor="let therapycategory of therapycategories" 
+              [selected]="therapycategory.id === appointmentParams.therapyCategoryId"
+              [value]="therapycategory.id">
+                {{therapycategory.name}}
+            </option>
+          </select>
+                  
+          <h5 class="text-warning ms-3">Therapy</h5>
+          <select id="therapyDropdown" class="form-select mb-4" (change)="onTherapySelected($event)">
+            <option *ngFor="let therapy of therapys" 
+              [selected]="therapy.id === appointmentParams.therapyId"
+              [value]="therapy.id">
+                {{therapy.name}}
+            </option>
+          </select>
+        </div>
+
+        <div *ngIf="this.appointmentParams.bookingTypeId == 1">
+          <h5 class="text-warning ms-3">Doctor</h5>
+          <select class="form-select mb-4" (change)="onDoctorSelected($event)">
+            <option *ngFor="let doctor of doctors;  let i = index" 
+              [selected]="doctor.id === appointmentParams.doctorId"
+              [value]="doctor.id">
+                {{doctor.name}}                
+            </option>
+          </select>
+        </div>
+
+
+        <div *ngIf="this.appointmentParams.bookingTypeId == 2">
+          <h5 class="text-warning ms-3">Therapist</h5>
+          <select   class="form-select mb-4" (change)="onTherapistTherapySelected($event)">
+            <option [value]="0">Select Therapist</option>
+            <option *ngFor="let therapistTherapie of therapistTherapies;  let i = index" 
+              [selected]="therapistTherapie.id === appointmentParams.therapistTherapyId"
+              [value]="therapistTherapie.id">
+                {{therapistTherapie.therapist.name}}                
+            </option>
+          </select>
+        </div>
+      </div>
+
+
+      
+      
+      <!--
+         <h2>Instructions</h2>
+        <ul>
+          <li>Working hours 9 to 5</li>
+          <li>Lunch time 12 to 1</li>
+          <li>Sat and Sun Holiday</li>
+          <li>Cannot modify past oppointments</li>
+          <li>Red color indicates booked by others</li>
+          <li>Blue color indicates booked by you</li>
+        </ul>
+      <div class='demo-app-sidebar-section'>
+        <label>
+          <input
+            type='checkbox'
+            [checked]='calendarVisible()'
+            (change)='handleCalendarToggle()'
+          />
+          toggle whole calendar
+        </label>
+      </div>
+      <div class='demo-app-sidebar-section'>
+        <label>
+          <input
+            type='checkbox'
+            [checked]='calendarOptions().weekends'
+            (change)='handleWeekendsToggle()'
+          />
+          toggle weekends
+        </label>
+      </div>
+      
+      <div class='demo-app-sidebar-section'>
+        <h2>All Events ({{currentEvents().length}})</h2>
+        <ul>
+          <li *ngFor='let event of currentEvents()'>
+            <b>{{event.startStr}}</b>
+            <i>{{event.title}}</i>
+          </li>
+        </ul>
+        <ul>
+          From API 
+          <div *ngFor="let item of appointments; let i=index">
+            <div>{{item.id}}</div>
+            <div>{{item.title}}</div>
+            <div>{{item.start}}</div>
+            <div>{{item.end}}</div>
+            
+          </div>
+        </ul>
+      </div>
+       -->
+    </div>
+   
+  
+    <div class='demo-app-main'>
+      <!-- ng-bootstrap Datepicker -->
+       <!--
+      <button (click)="addNewEvent()">Add New Event</button>
+      <button (click)="updateExistingEvent()">Update Event</button>
+      <button (click)="deleteEvent2(2)">Delete Event</button>
+      -->
+     
+      <full-calendar #calendar *ngIf='calendarVisible()' [events]="appointments"   [options]='calendarOptions()'>
+        <ng-template #eventContent let-arg>
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </ng-template>
+      </full-calendar>
+
+      
+       
+    </div>
+  
+  </div>
+
+
+
+
+<!-- Modal for adding/editing events -->
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <span class="close-btn" (click)="closeModal()">×</span>
+    <h2>{{ selectedEvent ? 'Edit Booking' : 'Add Booking' }}</h2>
+    <form (ngSubmit)="saveEvent()">
+      <table>
+        <tr>
+          <td colspan="2">
+            <label for="eventTitle">Describe illness</label>
+            <input type="text" id="eventTitle" [(ngModel)]="eventTitle" name="eventTitle" required />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="eventStartDate">Start Date & Time</label>
+          </td>
+          <td>
+            <input type="date-local" id="eventStartDate" [ngModel]="eventStartDate" name="eventStartDate" value=""
+              [readonly]="!!eventStartDate" style="background-color: lightgray;" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="eventEndDate">End Date & Time</label>
+          </td>
+          <td>
+            <input type="date-local" id="eventEndDate" [ngModel]="eventEndDate" value="" name="eventEndDate" required
+              [readonly]="!!eventEndDate" style="background-color: lightgray;" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <button type="submit">{{ selectedEvent ? 'Update Booking' : 'Confirm Booking' }}</button>&nbsp;
+            <button *ngIf="selectedEvent" (click)="closeModal()">Close</button>
+          </td>
+        </tr>
+      </table>
+
+    </form>
+  </div>
+</div>

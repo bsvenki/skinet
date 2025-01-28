@@ -1,7 +1,7 @@
-import { Component, signal, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, EventInput } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -15,11 +15,21 @@ import {HttpClient,HttpResponse} from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { AppointmentService } from '../appointment/appointment.service';
-import { EventService } from '../appointment/event.service';
-import { createEventId } from '../appointment/event.utils';
+import { EventService } from '../event.service';
+import { createEventId } from '../event.utils';
 import { FormsModule } from '@angular/forms';
 import flatpickr from 'flatpickr';  // Import Flatpickr
+import { Patient } from 'src/app/shared/models/patient';
+import { AppointmentParams } from 'src/app/shared/models/appointmentParams';
+import { BookingType } from '../../shared/models/bookingType';
+import { TherapyCategory } from '../../shared/models/therapycategory';
+import { Therapy } from '../../shared/models/therapy';
+import { Therapist } from 'src/app/shared/models/therapist';
+import { TherapistTherapy } from 'src/app/shared/models/therapistTherapy';
+import { Doctor } from 'src/app/shared/models/doctor';
+import { BasketService } from 'src/app/basket/basket.service';
+import { Product } from 'src/app/shared/models/product';
+
 
 
 
@@ -27,30 +37,45 @@ import flatpickr from 'flatpickr';  // Import Flatpickr
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule, FullCalendarModule],
+  providers: [DatePipe],
   templateUrl: './patient.component.html',  
   styleUrls: ['./patient.component.scss']
 })
 export class PatientComponent {
+  therapyname: any;
  
  
+  
 
-  constructor(private changeDetector: ChangeDetectorRef, public appointmentService: AppointmentService, private eventService: EventService,private http: HttpClient) { }
-
+  constructor(private changeDetector: ChangeDetectorRef, private eventService: EventService,private http: HttpClient,private datePipe: DatePipe,private basketService: BasketService) { }
 
   baseUrl = environment.apiUrl;
+  appointmentParams = new AppointmentParams();
+  patients: Patient[] = [];
+  bookingtypes: BookingType[] = []  
   appointments: IAppointment[] = [];
-
+  therapycategories: TherapyCategory[] = [];
+  therapys: Therapy[] = [];
+  therapists: Therapist[] = [];
+  doctors: Doctor[] = [];
+  therapistTherapies: TherapistTherapy[] = [];
+  product?: Product;
+  
 
   //events: EventInput[] = [];  // Store events here
   selectedEvent: EventInput | null = null;  // Track the selected event
   eventTitle: string = '';  // Title of the event
   eventStartDate: string = '';  // Start date of the event
   eventEndDate: string = '';  // End date of the event
+  pickedDate: string = '';
   isModalOpen: boolean = false;  // Flag to open/close the modal
   cqlApi: any;
 
   calendarVisible = signal(true);
+
   calendarOptions = signal<CalendarOptions>({
+    // Create the FullCalendar instance using the options
+    
     plugins: [
       interactionPlugin,
       dayGridPlugin,
@@ -58,6 +83,7 @@ export class PatientComponent {
       listPlugin,
     ],
     firstDay: 1, // Start the week on Monday
+    //initialDate: '2025-01-18',  // Set the start date here (use format YYYY-MM-DD)
     initialDate: new Date(),  // Set to current date
     headerToolbar: {
       left: 'prev,next today',      
@@ -73,9 +99,12 @@ export class PatientComponent {
     dayMaxEvents: true,
     droppable: false,
     allDaySlot: false,  // Hide the "All Day" slot section
+    /*
     datesSet(arg) {
       arg.start = new Date();
     },
+    */
+    
     
 
     //eventColor: 'lightcoral',        // Default background color for all events
@@ -123,7 +152,7 @@ export class PatientComponent {
 
     //events: "https://localhost:5001/api/Appointment", //this is working
 
-    //events: this.appointmentService.getAppointmentsNew, //this is working, but not showing in calendar
+    
 
     //events: this.getAppointmentsLocalOne(),    
    
@@ -153,12 +182,15 @@ export class PatientComponent {
     eventRemove: (event) => this.onEventRemove(event),
 
     
-    
   
 
     
     
   });
+
+  // Reference to FullCalendar component
+  @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
+
   
   currentEvents = signal<EventApi[]>([]);
 
@@ -190,10 +222,15 @@ export class PatientComponent {
   // Handle click on an empty date to add a new event
   handleDateClick(arg: any) {
 
+
+   
+    
     const currentDate = new Date();
     if (new Date(arg.dateStr) < currentDate) {
         // Restrict editing of past events
+        
         const calendarApi = arg.view.calendar;
+        
         calendarApi.unselect();
         alert('You cannot edit past events!');
        
@@ -226,11 +263,11 @@ export class PatientComponent {
     
     this.selectedEvent = null;
     this.eventTitle = '';
-    this.eventStartDate = arg.dateStr;  // Set clicked date as the start date
+    this.eventStartDate = this.formatDate(arg.dateStr);  // Set clicked date as the start date
 
     var d = new Date(arg.dateStr);
     var newEndDate = new Date(d.getTime() + 15*60000);
-    this.eventEndDate = newEndDate.toString();//arg.dateStr;  // Set the end date to the start date
+    this.eventEndDate = this.formatDate(newEndDate.toString());//arg.dateStr;  // Set the end date to the start date
     this.isModalOpen = true;  // Open the modal to add an event
     return true;
   }
@@ -252,7 +289,8 @@ export class PatientComponent {
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
-        allDay: selectInfo.allDay
+        allDay: selectInfo.allDay,
+        patientID: 1,
       };
       calendarApi.addEvent(myaddevent);
 
@@ -274,8 +312,12 @@ export class PatientComponent {
   saveEvent() {
 
     //formatDate(arg.event.start, { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' });
-   const startDate = new Date(this.eventStartDate);
-   const endDate = new Date(this.eventEndDate);
+   
+   
+
+    const startDate = new Date(this.eventStartDate);
+    const endDate = new Date(this.eventEndDate);
+
    //const startDate = new Date(this.eventStartDate.toLocaleString());
    //const endDate = new Date(this.eventStartDate.toLocaleString());
 
@@ -293,7 +335,14 @@ export class PatientComponent {
         id: this.selectedEvent.id? this.selectedEvent.id.toString() : '0',
         title: this.eventTitle,
         start: new Date(this.eventStartDate),
-        end: new Date(this.eventEndDate),        
+        end: new Date(this.eventEndDate), 
+        patientId: this.appointmentParams.patientId,  
+        bookingTypeId: this.appointmentParams.bookingTypeId,  
+        therapyCategoryId: this.appointmentParams.therapyCategoryId, 
+        therapistTherapyId: this.appointmentParams.therapistTherapyId,  
+        doctorId: this.appointmentParams.doctorId,
+        status: this.appointmentParams.status 
+              
       };
 
      
@@ -306,13 +355,16 @@ export class PatientComponent {
       
       
       //this.currEvent.event.setProp('title', myupdateevent.title); 
+      // to avoid api race condition
       setTimeout(() => {        
-        this.ngOnInit();
+        //this.ngOnInit();
         //this.prepareRow();
         //this.prepareGroups(); 
+        this.getAppointments(this.appointmentParams);
       }, 1000);
       
       // this.updateEventInDatabase(this.selectedEvent);
+      
       
     } 
     else 
@@ -321,11 +373,29 @@ export class PatientComponent {
         id: createEventId(),
         title: this.eventTitle,
         start: startDate,
-        end: endDate,        
+        end: endDate,   
+        patientId: this.appointmentParams.patientId,  
+        bookingTypeId: this.appointmentParams.bookingTypeId,  
+        therapyCategoryId: this.appointmentParams.therapyCategoryId, 
+        therapistTherapyId: this.appointmentParams.therapistTherapyId,  
+        doctorId: this.appointmentParams.doctorId,
+        status: this.appointmentParams.status   
       };
+
+      
+
       this.eventService.addEvent(myaddevent); 
       this.onEventAdd(myaddevent);
-      this.ngOnInit(); 
+
+     
+
+      // to avoid api race condition
+      setTimeout(() => {        
+        //this.ngOnInit();
+        //this.prepareRow();
+        //this.prepareGroups(); 
+        this.getAppointments(this.appointmentParams);
+      }, 1000);
       
   
       //this.appointments.push(myaddevent);
@@ -343,6 +413,27 @@ export class PatientComponent {
       */
       
     }
+
+    
+
+    const prod: Product = {
+      id: 1,
+      name: 'Panchakarma',
+      description: 'test',
+      price: 50.50,       
+      pictureUrl: 'https://therapybrands.com/wp-content/uploads/2023/04/Blog-Header-Images-6.jpg',
+      productType: '1',
+      productBrand: '1',
+    };
+    
+    
+    this.basketService.removeItemFromBasket(1);  
+    
+    setTimeout(() => {
+      this.product = prod;
+      this.basketService.addItemToBasket(this.product, 1);
+    }, 1000);
+   
 
     this.closeModal();  // Close the modal
   }
@@ -377,7 +468,7 @@ export class PatientComponent {
   */
 
   handleEventClick(arg: any) {
-    alert('handleEventClick');
+    //alert('handleEventClick');
 
     const currentDate = new Date();
     if (new Date(arg.event.start) < currentDate) {
@@ -390,8 +481,8 @@ export class PatientComponent {
     };
 
     // Validation for existing booking
-    if (arg.event.extendedProps.status === 'confirmed') {
-      alert('This slot is already booked and cannot be edited.');
+    if (arg.event.extendedProps.status === 'Confirmed') {
+      alert('This slot is already booked by other person so cannot be edited.');
       return false;  // Prevent editing of booked events
     }
     //alert(clickInfo.event.id);
@@ -406,8 +497,8 @@ export class PatientComponent {
     this.cqlApi = arg.view.calendar;
     this.selectedEvent = arg.event;
     this.eventTitle = arg.event.title;
-    this.eventStartDate  = arg.event.start;
-    this.eventEndDate = arg.event.end;
+    this.eventStartDate  = this.formatDate(arg.event.start);
+    this.eventEndDate = this.formatDate(arg.event.end);
     //this.eventStartDate = formatDate(arg.event.start, { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' });
     //this.eventEndDate = arg.event.end ? formatDate(arg.event.end, { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : this.eventStartDate;
     this.isModalOpen = true;  // Open the modal to edit the event
@@ -524,13 +615,19 @@ export class PatientComponent {
 
     /* this works from event.service.ts use it for testing purpose */
      // Fetch events from the API
-     this.eventService.fetchEvents();
+    // this.eventService.fetchEvents();
 
      // Subscribe to the events observable and update FullCalendar
-    this.eventService.getEvents2().subscribe((events) => {
-      this.appointments = events; 
+    //this.eventService.getEvents2().subscribe((events) => {
+    //  this.appointments = events; 
 
-    });
+    //});
+
+    this.getPatients();
+    this.getBookingTypes();
+    this.getTherapyCategories();
+    this.getTherapysByCategoryId(1);
+    //this.getTherapists();
 
     
     
@@ -540,7 +637,7 @@ export class PatientComponent {
 
   // Example of adding a new event
   addNewEvent() {
-    alert('test');
+    //alert('test');
     const newEvent = {
       id: createEventId(),
       title: 'New Event',
@@ -570,12 +667,14 @@ export class PatientComponent {
     this.eventService.deleteEvent(eventId);  // This triggers an update in eventsSubject
   }
 
+  /*
   getAppointmentsLocal(){
       
     this.appointmentService.getAppointments().subscribe((resp: IAppointment[]) => {      
       this.appointments = resp.map((e: IAppointment) => ({id: e.id, title: e.title, start: e.start, end: e.end }))      
     })
   }
+  */
 
   /* old working one
   onEventAdd(event : any) {
@@ -599,7 +698,7 @@ export class PatientComponent {
 
   // Handle the event when a new event is added to FullCalendar
   onEventAdd(event: any): void {
-    alert('onEventAdd');
+    //alert('onEventAdd');
     //const eventData = event.event;
     const eventData = event;
 
@@ -650,7 +749,14 @@ export class PatientComponent {
     return this.http.post(`${environment.apiUrl}Appointment`, {
       title: eventData.title,
       start: this.toISOLocal(new Date(eventData.start)),  //eventData.start.toISOString(),
-      end: this.toISOLocal(new Date(eventData.end)) //eventData.end?.toISOString(), // Ensure that the end date is optional if not set
+      end: this.toISOLocal(new Date(eventData.end)), //eventData.end?.toISOString(), // Ensure that the end date is optional if not set
+      patientId: eventData.patientId,
+      bookingTypeId: eventData.bookingTypeId,  
+      therapyCategoryId: eventData.therapyCategoryId, 
+      therapistTherapyId: eventData.therapistTherapyId,  
+      doctorId: eventData.doctorId,
+      status: eventData.status 
+
       //description: eventData.extendedProps?.description || ''
     }).pipe(
       catchError(error => {
@@ -668,7 +774,13 @@ export class PatientComponent {
       //start: eventData.start.toISOString(),
       //end: eventData.end?.toISOString(),
       start: this.toISOLocal(new Date(eventData.start)), 
-      end: this.toISOLocal(new Date(eventData.end))
+      end: this.toISOLocal(new Date(eventData.end)),
+      patientId: eventData.patientId,
+      bookingTypeId: eventData.bookingTypeId,  
+      therapyCategoryId: eventData.therapyCategoryId, 
+      therapistTherapyId: eventData.therapistTherapyId,  
+      doctorId: eventData.doctorId,
+      status: eventData.status 
       //description: eventData.extendedProps?.description || ''
     }).pipe(
       catchError(error => {
@@ -687,6 +799,242 @@ export class PatientComponent {
       })
     );
   }
+
+  getPatients(){
+    this.eventService.getPatients().subscribe({
+      //next: response => this.brands = response,
+      next: response => this.patients = [{id:0, name:'Select Patient'}, ...response],
+      error: error => console.log(error)
+    })
+  }
+
+  onPatientSelected(event: any){
+    this.appointmentParams.patientId = event.target.value;
+    // this.shopParams.pageNumber = 1;
+    // this.getProducts();
+  }
+
+ 
+
+  getBookingTypes(){
+    this.eventService.getBookingTypes().subscribe({
+      //next: response => this.brands = response,
+      next: response => this.bookingtypes = [...response],
+      error: error => console.log(error)
+    })
+  }
+
+  onBookingTypeChange(event: any): void {
+    this.appointmentParams.bookingTypeId = event.target.value;
+
+    this.therapistTherapies = []; 
+    this.therapists = []; 
+    
+    // Consulting
+    if(this.appointmentParams.bookingTypeId == 1)
+    {
+     
+      // For consulting set therapy category and therapy as zero
+      this.appointmentParams.therapyCategoryId = 0;
+      this.appointmentParams.therapyId = 0;     
+      this.appointmentParams.doctorId = 0;
+                
+      this.getDoctors();
+      
+    }
+    else //Therapy
+    {
+      // For thereapy set therapy category as 1 and therapy as 1 as default
+      this.appointmentParams.therapyCategoryId = 0;
+      this.appointmentParams.therapyId = 0;       
+      this.getTherapyCategories();
+      this.getTherapysByCategoryId(this.appointmentParams.therapyCategoryId);
+           
+    }
+    //alert(event.target.value);
+  }
+
+  getTherapyCategories()
+  {
+    this.eventService.getTherapyCategories().subscribe({
+      //next: response => this.brands = response,
+      next: response => this.therapycategories = [{ id: 0,  name: 'Select Therapy Category'}, ...response],
+      error: error => console.log(error)
+    })
+  }
+
+  onTherapyCategorySelected(event: any){
+    this.appointmentParams.therapyCategoryId = event.target.value;    
+    //alert(event.target.value);
+    // this.shopParams.pageNumber = 1;
+    // this.getProducts();
+    this.therapists = [];
+    this.therapistTherapies = [];
+    this.getTherapysByCategoryId(event.target.value);
+  }
+
+  getTherapists()
+  {
+    this.eventService.getTherapists().subscribe({
+      //next: response => this.brands = response,
+      next: response => this.therapists = [{ id: 0,  name: 'Select Therapist'}, ...response],
+      error: error => console.log(error)
+    })
+  }
+
+  
+
+  getDoctors()
+  {
+    this.eventService.getDoctors().subscribe({
+      //next: response => this.brands = response,
+      next: response => this.doctors = [{ id: 0,  name: 'Select Doctor'}, ...response],
+      error: error => console.log(error)
+    })
+
+  }
+
+  onDoctorSelected(event: any){
+    
+
+    if(this.appointmentParams.bookingTypeId == 1)
+      {
+        this.appointmentParams.therapistTherapyId = 0;
+        this.appointmentParams.doctorId = event.target.value;
+        
+      }
+    /*
+    alert('pid' + this.appointmentParams.patientId + 
+          'bkid' +  this.appointmentParams.bookingTypeId + 
+          'tcid' +  this.appointmentParams.therapyCategoryId + 
+          'therapyid' +  this.appointmentParams.therapyId +
+          'doctorid' +  this.appointmentParams.doctorId
+         );
+
+    */
+    this.getAppointments(this.appointmentParams);
+  }
+
+
+  getTherapysByCategoryId(categoryid: number)
+  {
+    
+    this.eventService.getTherapysByCategoryId(categoryid).subscribe({      
+      next: response => this.therapys = [{ id: 0, therapyCategoryId: 0, name: 'Select Therapy'}, ...response],
+      error: error => console.log(error)
+    })
+  }
+
+  onTherapySelected(event: any){
+    this.appointmentParams.therapyId = event.target.value;
+    this.therapists = [];
+    this.getTherapistsByTherapyId(this.appointmentParams.therapyId);
+
+  }
+
+
+
+
+  
+  getTherapistsByTherapyId(therapyid: number)
+  {
+    this.eventService.getTherapistsByTherapyId(therapyid).subscribe({      
+      next: response =>{
+        this.therapistTherapies = [...response];        
+        //this.therapists = [{ id: 0,  name: 'Select Therapist', }, ...response.map(item => item.therapist)];
+      },     
+      error: error => console.log(error)
+    })
+  }
+
+  onTherapistTherapySelected(event: any)
+  {
+    if(this.appointmentParams.bookingTypeId == 2)
+    {
+      this.appointmentParams.therapistTherapyId = event.target.value;
+      this.appointmentParams.doctorId = 0;
+      
+    }
+    
+    
+    /*
+    alert('pid' + this.appointmentParams.patientId + 
+          'bkid' +  this.appointmentParams.bookingTypeId + 
+          'tcid' +  this.appointmentParams.therapyCategoryId + 
+          'therapyid' +  this.appointmentParams.therapyId +
+          'doctorid' +  this.appointmentParams.doctorId +
+          'therapisttherapyid' +  this.appointmentParams.therapistTherapyId
+         );
+      */
+
+         
+         this.getAppointments(this.appointmentParams);
+
+  }
+
+  getAppointments(appointParams: AppointmentParams)
+  {
+    this.eventService.fetchEvents(appointParams);
+
+     // Subscribe to the events observable and update FullCalendar
+    this.eventService.getEvents2().subscribe((events) => {
+      this.appointments = events; 
+    });
+  }
+
+
+  /* no need to call - will revisit if needed
+  ngAfterViewInit(): void {
+    // Set initial date in FullCalendar after view initialization
+    this.setInitialDate();
+  }
+  */
+
+  // Set the initial date in FullCalendar when the date changes
+  setInitialDate(): void {
+    //const selectedDate = `${this.model.year}-${this.model.month}-${this.model.day}`;
+    //const selectedDate = '2025-01-18';
+    const selectedDate = this.pickedDate;
+    // Update the calendar options reactively
+    const updatedOptions = {
+      ...this.calendarOptions(),
+      initialDate: selectedDate,  // Correctly set initialDate here
+    };
+    this.calendarOptions.set(updatedOptions);  // Update the calendar options signal
+    alert(updatedOptions.initialDate);
+
+     // Manually trigger FullCalendar render() after updating options
+     if (this.calendarComponent) {
+      const api = this.calendarComponent.getApi();
+      
+      // Use gotoDate to make FullCalendar jump to the selected date
+      api.gotoDate(selectedDate); // Forces FullCalendar to jump to the selected date
+
+      // Optionally, you could use api.refetchEvents() if you have events and need to reload them
+      // api.refetchEvents();
+    }
+    
+  }
+
+  // Handle date changes from the date picker
+  onDateChange(event: any): void {
+    this.pickedDate = event.target.value;
+    this.setInitialDate();
+  }
+
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'yyyy-MM-ddTHH:mm:ss')!;
+  }
+  
+
+ 
+
+  
+
+  
+
+  
+  
 
   
 
